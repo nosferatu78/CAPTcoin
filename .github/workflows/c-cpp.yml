@@ -13,7 +13,5 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: enter
-      run: cd src
     - name: make
-      run: make -f makefile.unix
+      run: make -f src/makefile.unix
