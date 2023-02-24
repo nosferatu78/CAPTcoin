@@ -144,20 +144,20 @@ test check: test_CAPTcoin FORCE
 
 # auto-generated dependencies:
 -include $(OBJ)/*.P
--include obj-test/*.P
+-include $(SRC)/obj-test/*.P
 
 $(OBJ)/build.h: FORCE
-	/bin/sh ../share/genbuild.sh $(OBJ)/build.h
+	/bin/sh share/genbuild.sh $(OBJ)/build.h
 version.cpp: $(OBJ)/build.h
 DEFS += -DHAVE_BUILD_INFO
 
-$(OBJ)/scrypt-x86.o: scrypt-x86.S
+$(OBJ)/scrypt-x86.o: $(SRC)/scrypt-x86.S
 	$(CXX) -c $(xCXXFLAGS) -MMD -o $@ $<
 
-$(OBJ)/scrypt-x86_64.o: scrypt-x86_64.S
+$(OBJ)/scrypt-x86_64.o: $(SRC)/scrypt-x86_64.S
 	$(CXX) -c $(xCXXFLAGS) -MMD -o $@ $<
 
-$(OBJ)/%.o: %.cpp
+$(OBJ)/%.o: $(SRC)/%.cpp
 	$(CXX) -c $(xCXXFLAGS) -MMD -MF $(@:%.o=%.d) -o $@ $<
 	@cp $(@:%.o=%.d) $(@:%.o=%.P); \
 	  sed -e 's/#.*//' -e 's/^[^:]*: *//' -e 's/ *\\$$//' \
@@ -167,9 +167,9 @@ $(OBJ)/%.o: %.cpp
 CAPTcoind: $(OBJS:$(OBJ)/%=$(OBJ)/%)
 	$(LINK) $(xCXXFLAGS) -o $@ $^ $(xLDFLAGS) $(LIBS)
 
-TESTOBJS := $(patsubst test/%.cpp,obj-test/%.o,$(wildcard test/*.cpp))
+TESTOBJS := $(patsubst $(SRC)/test/%.cpp,$(SRC)/obj-test/%.o,$(wildcard $(SRC)/test/*.cpp))
 
-obj-test/%.o: test/%.cpp
+$(SRC)/obj-test/%.o: test/%.cpp
 	$(CXX) -c $(TESTDEFS) $(xCXXFLAGS) -MMD -MF $(@:%.o=%.d) -o $@ $<
 	@cp $(@:%.o=%.d) $(@:%.o=%.P); \
 	  sed -e 's/#.*//' -e 's/^[^:]*: *//' -e 's/ *\\$$//' \
@@ -182,9 +182,9 @@ test_CAPTcoin: $(TESTOBJS) $(filter-out $(OBJ)/init.o,$(OBJS:$(OBJ)/%=$(OBJ)/%))
 clean:
 	-rm -f CAPTcoind test_CAPTcoin
 	-rm -f $(OBJ)/*.o
-	-rm -f obj-test/*.o
+	-rm -f $(SRC)/obj-test/*.o
 	-rm -f $(OBJ)/*.P
-	-rm -f obj-test/*.P
+	-rm -f $(SRC)/obj-test/*.P
 	-rm -f $(OBJ)/build.h
 
 FORCE:
